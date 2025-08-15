@@ -1,0 +1,17 @@
+.ruff_cache*
+__pycache__*
+.env
+
+.DS_Store
+
+wandb/
+sae_models/
+sae-test/
+
+exploration.ipynb
+
+feature_visualization.html
+feature_data.json
+data/prompts.csv
+sae-test/
+cache/
