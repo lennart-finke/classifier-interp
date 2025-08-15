@@ -4,6 +4,8 @@
 We train SAEs on [Prompt-Guard-86M](https://huggingface.co/meta-llama/Prompt-Guard-86M), using the great [`dictionary_learning` package](https://github.com/saprmarks/dictionary_learning). The same methodology can be applied on any Huggingface-compatible classifier.
 A guide on how to use this repo is provided in `reproducing.MD`.
 
+Model weights are included in this repository via Git LFS.
+
 
 ### Paper
 🚧 Public preprint to come soon...
