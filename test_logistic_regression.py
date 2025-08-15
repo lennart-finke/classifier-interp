@@ -71,35 +71,39 @@ def extract_all_layer_activations(texts, split_name):
 def create_layerwise_metrics_plot(layer_metrics):
     """Create the layerwise metrics plot from cached results."""
     print("Creating layerwise metrics plot from cached data...")
-    
+
     layers = [m["layer"] for m in layer_metrics]
     accuracies = [m["accuracy"] for m in layer_metrics]
     aucs = [m["auc"] for m in layer_metrics]
-    
+
     fig = go.Figure()
-    
+
     # Add accuracy line
-    fig.add_trace(go.Scatter(
-        x=layers,
-        y=accuracies,
-        mode='lines+markers',
-        name='Test Accuracy',
-        line=dict(color='royalblue', width=3),
-        marker=dict(symbol='circle', size=8, color='royalblue'),
-        hovertemplate='Layer: %{x}<br>Accuracy: %{y:.4f}<extra></extra>'
-    ))
-    
+    fig.add_trace(
+        go.Scatter(
+            x=layers,
+            y=accuracies,
+            mode="lines+markers",
+            name="Test Accuracy",
+            line=dict(color="royalblue", width=3),
+            marker=dict(symbol="circle", size=8, color="royalblue"),
+            hovertemplate="Layer: %{x}<br>Accuracy: %{y:.4f}<extra></extra>",
+        )
+    )
+
     # Add AUC line
-    fig.add_trace(go.Scatter(
-        x=layers,
-        y=aucs,
-        mode='lines+markers',
-        name='Test AUC',
-        line=dict(color='#ff7f0e', width=3),
-        marker=dict(symbol='square', size=8, color='#ff7f0e'),
-        hovertemplate='Layer: %{x}<br>AUC: %{y:.4f}<extra></extra>'
-    ))
-    
+    fig.add_trace(
+        go.Scatter(
+            x=layers,
+            y=aucs,
+            mode="lines+markers",
+            name="Test AUC",
+            line=dict(color="#ff7f0e", width=3),
+            marker=dict(symbol="square", size=8, color="#ff7f0e"),
+            hovertemplate="Layer: %{x}<br>AUC: %{y:.4f}<extra></extra>",
+        )
+    )
+
     # Update layout
     fig.update_layout(
         title="Test Accuracy and AUC Across Layers",
@@ -117,35 +121,37 @@ def create_layerwise_metrics_plot(layer_metrics):
             bgcolor="rgba(255,255,255,0.8)",
             bordercolor="black",
             borderwidth=1,
-            font=dict(size=14)
+            font=dict(size=14),
         ),
-        margin=dict(l=60, r=60, t=80, b=60)
+        margin=dict(l=60, r=60, t=80, b=60),
     )
-    
+
     # Update axes
     fig.update_xaxes(
-        tickmode='array',
+        tickmode="array",
         tickvals=layers,
-        range=[min(layers)-0.5, max(layers)+0.5],
+        range=[min(layers) - 0.5, max(layers) + 0.5],
         showgrid=True,
         gridwidth=1,
-        gridcolor='lightgray',
+        gridcolor="lightgray",
         tickfont=dict(size=14),
-        title_font=dict(size=18)
+        title_font=dict(size=18),
     )
     fig.update_yaxes(
         range=[0, 1],
         showgrid=True,
         gridwidth=1,
-        gridcolor='lightgray',
+        gridcolor="lightgray",
         tickfont=dict(size=14),
-        title_font=dict(size=18)
+        title_font=dict(size=18),
     )
-    
+
     os.makedirs("figures", exist_ok=True)
     fig.write_html("figures/layerwise_metrics.html")
     fig.write_image("figures/layerwise_metrics.png", width=900, height=600, scale=2)
-    print("Layerwise metrics plot saved to figures/layerwise_metrics.html and figures/layerwise_metrics.png")
+    print(
+        "Layerwise metrics plot saved to figures/layerwise_metrics.html and figures/layerwise_metrics.png"
+    )
 
 
 # Main loop for all layers
@@ -153,20 +159,21 @@ def main():
     print(
         "=== SAE Feature-based Logistic Regression for Prompt Classification (All Layers) ==="
     )
-    
+
     # Check if layer metrics cache exists
     layer_metrics_cache_file = "cache/layer_metrics.json"
     if os.path.exists(layer_metrics_cache_file):
         print("Loading layer metrics from cache...")
         import json
-        with open(layer_metrics_cache_file, 'r') as f:
+
+        with open(layer_metrics_cache_file, "r") as f:
             layer_metrics = json.load(f)
         print(f"Loaded {len(layer_metrics)} layer metrics from cache")
-        
+
         # Create the layerwise metrics plot directly
         create_layerwise_metrics_plot(layer_metrics)
         return
-    
+
     X_train_texts, X_test_texts, y_train, y_test = prepare_data_once()
     # Extract and cache activations for all layers
     X_train_acts = extract_all_layer_activations(X_train_texts, "train")
@@ -262,35 +269,52 @@ def main():
         p_values_top = [f[2] for f in top_features]
         coefficients_top = [f[1] for f in top_features]
         neg_log_p_values = [-np.log10(p) for p in p_values_top]
-        
+
         # Create color mapping based on coefficients
         colors = ["#ff7f0e" if c > 0 else "#1f77b4" for c in coefficients_top]
-        
+
         fig = go.Figure()
-        
-        fig.add_trace(go.Bar(
-            y=feature_names_top,
-            x=neg_log_p_values,
-            orientation='h',
-            marker=dict(
-                color=colors,
-                opacity=0.8
-            ),
-            hovertemplate='<b>%{y}</b><br>' +
-                         'Coefficient: %{customdata[0]:.4f}<br>' +
-                         'P-value: %{customdata[1]:.2e}<br>' +
-                         '-log10(p): %{x:.3f}<extra></extra>',
-            customdata=list(zip(coefficients_top, p_values_top))
-        ))
-        
+
+        fig.add_trace(
+            go.Bar(
+                y=feature_names_top,
+                x=neg_log_p_values,
+                orientation="h",
+                marker=dict(color=colors, opacity=0.8),
+                hovertemplate="<b>%{y}</b><br>"
+                + "Coefficient: %{customdata[0]:.4f}<br>"
+                + "P-value: %{customdata[1]:.2e}<br>"
+                + "-log10(p): %{x:.3f}<extra></extra>",
+                customdata=list(zip(coefficients_top, p_values_top)),
+            )
+        )
+
         # Add significance threshold lines
-        fig.add_hline(y=-np.log10(0.05), line_dash="dash", line_color="orange", 
-                     annotation_text="p < 0.05", annotation_position="top right", annotation=dict(font_size=14))
-        fig.add_hline(y=-np.log10(0.01), line_dash="dash", line_color="red", 
-                     annotation_text="p < 0.01", annotation_position="top right", annotation=dict(font_size=14))
-        fig.add_hline(y=-np.log10(0.001), line_dash="dash", line_color="darkred", 
-                     annotation_text="p < 0.001", annotation_position="top right", annotation=dict(font_size=14))
-        
+        fig.add_hline(
+            y=-np.log10(0.05),
+            line_dash="dash",
+            line_color="orange",
+            annotation_text="p < 0.05",
+            annotation_position="top right",
+            annotation=dict(font_size=14),
+        )
+        fig.add_hline(
+            y=-np.log10(0.01),
+            line_dash="dash",
+            line_color="red",
+            annotation_text="p < 0.01",
+            annotation_position="top right",
+            annotation=dict(font_size=14),
+        )
+        fig.add_hline(
+            y=-np.log10(0.001),
+            line_dash="dash",
+            line_color="darkred",
+            annotation_text="p < 0.001",
+            annotation_position="top right",
+            annotation=dict(font_size=14),
+        )
+
         fig.update_layout(
             title=f"Top 20 Feature Importance (Layer {layer})",
             xaxis_title="-log10(p-value)",
@@ -301,80 +325,89 @@ def main():
             title_x=0.5,
             title_font_size=24,
             font=dict(size=16),
-            margin=dict(l=60, r=60, t=80, b=60)
+            margin=dict(l=60, r=60, t=80, b=60),
         )
         fig.update_xaxes(title_font=dict(size=18), tickfont=dict(size=14))
         fig.update_yaxes(title_font=dict(size=18), tickfont=dict(size=14))
-        
+
         outdir = f"figures/layer_{layer}"
         os.makedirs(outdir, exist_ok=True)
         fig.write_html(f"{outdir}/feature_importance_lr.html")
-        fig.write_image(f"{outdir}/feature_importance_lr.png", width=900, height=600, scale=2)
+        fig.write_image(
+            f"{outdir}/feature_importance_lr.png", width=900, height=600, scale=2
+        )
         # Plot results with Plotly
         from sklearn.metrics import roc_curve
 
         fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
-        
+
         # Create subplots
         fig = make_subplots(
-            rows=1, cols=2,
+            rows=1,
+            cols=2,
             subplot_titles=("ROC Curve", "Prediction Distributions"),
-            specs=[[{"type": "scatter"}, {"type": "histogram"}]]
+            specs=[[{"type": "scatter"}, {"type": "histogram"}]],
         )
-        
+
         # ROC Curve
         fig.add_trace(
             go.Scatter(
-                x=fpr, y=tpr,
-                mode='lines',
-                name=f'ROC curve (AUC = {auc:.3f})',
-                line=dict(color='royalblue', width=3),
-                hovertemplate='FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra></extra>'
+                x=fpr,
+                y=tpr,
+                mode="lines",
+                name=f"ROC curve (AUC = {auc:.3f})",
+                line=dict(color="royalblue", width=3),
+                hovertemplate="FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra></extra>",
             ),
-            row=1, col=1
+            row=1,
+            col=1,
         )
-        
+
         # Random classifier line
         fig.add_trace(
             go.Scatter(
-                x=[0, 1], y=[0, 1],
-                mode='lines',
-                name='Random classifier',
-                line=dict(color='gray', width=2, dash='dash'),
-                hovertemplate='FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra></extra>'
+                x=[0, 1],
+                y=[0, 1],
+                mode="lines",
+                name="Random classifier",
+                line=dict(color="gray", width=2, dash="dash"),
+                hovertemplate="FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra></extra>",
             ),
-            row=1, col=1
+            row=1,
+            col=1,
         )
-        
+
         # Prediction distributions
         y_test_np = np.array(y_test)
         benign_probs = y_pred_proba[y_test_np == 0]
         harmful_probs = y_pred_proba[y_test_np == 1]
-        
+
         fig.add_trace(
             go.Histogram(
                 x=benign_probs,
-                name='Benign',
+                name="Benign",
                 nbinsx=30,
                 opacity=0.7,
-                marker_color='#1f77b4',
-                hovertemplate='Probability: %{x:.3f}<br>Count: %{y}<extra></extra>'
+                marker_color="#1f77b4",
+                hovertemplate="Probability: %{x:.3f}<br>Count: %{y}<extra></extra>",
             ),
-            row=1, col=2
+            row=1,
+            col=2,
         )
-        
+
         fig.add_trace(
             go.Histogram(
                 x=harmful_probs,
-                name='Harmful',
+                name="Harmful",
                 nbinsx=30,
                 opacity=0.7,
-                marker_color='#ff7f0e',
-                hovertemplate='Probability: %{x:.3f}<br>Count: %{y}<extra></extra>'
+                marker_color="#ff7f0e",
+                hovertemplate="Probability: %{x:.3f}<br>Count: %{y}<extra></extra>",
             ),
-            row=1, col=2
+            row=1,
+            col=2,
         )
-        
+
         # Update layout
         fig.update_layout(
             title=f"Logistic Regression Results (Layer {layer})",
@@ -390,40 +423,80 @@ def main():
                 bgcolor="rgba(255,255,255,0.8)",
                 bordercolor="black",
                 borderwidth=1,
-                font=dict(size=14)
-            )
+                font=dict(size=14),
+            ),
         )
-        
+
         # Update axes
-        fig.update_xaxes(title_text="False Positive Rate", row=1, col=1, range=[0, 1], title_font=dict(size=16), tickfont=dict(size=14))
-        fig.update_yaxes(title_text="True Positive Rate", row=1, col=1, range=[0, 1], title_font=dict(size=16), tickfont=dict(size=14))
-        fig.update_xaxes(title_text="Predicted Probability of Harmful", row=1, col=2, range=[0, 1], title_font=dict(size=16), tickfont=dict(size=14))
-        fig.update_yaxes(title_text="Count", row=1, col=2, title_font=dict(size=16), tickfont=dict(size=14))
+        fig.update_xaxes(
+            title_text="False Positive Rate",
+            row=1,
+            col=1,
+            range=[0, 1],
+            title_font=dict(size=16),
+            tickfont=dict(size=14),
+        )
+        fig.update_yaxes(
+            title_text="True Positive Rate",
+            row=1,
+            col=1,
+            range=[0, 1],
+            title_font=dict(size=16),
+            tickfont=dict(size=14),
+        )
+        fig.update_xaxes(
+            title_text="Predicted Probability of Harmful",
+            row=1,
+            col=2,
+            range=[0, 1],
+            title_font=dict(size=16),
+            tickfont=dict(size=14),
+        )
+        fig.update_yaxes(
+            title_text="Count",
+            row=1,
+            col=2,
+            title_font=dict(size=16),
+            tickfont=dict(size=14),
+        )
 
         # Make subplot titles larger
         fig.update_annotations(font_size=16)
-        
+
         # Add grid
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', row=1, col=1)
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', row=1, col=1)
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', row=1, col=2)
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', row=1, col=2)
-        
+        fig.update_xaxes(
+            showgrid=True, gridwidth=1, gridcolor="lightgray", row=1, col=1
+        )
+        fig.update_yaxes(
+            showgrid=True, gridwidth=1, gridcolor="lightgray", row=1, col=1
+        )
+        fig.update_xaxes(
+            showgrid=True, gridwidth=1, gridcolor="lightgray", row=1, col=2
+        )
+        fig.update_yaxes(
+            showgrid=True, gridwidth=1, gridcolor="lightgray", row=1, col=2
+        )
+
         fig.write_html(f"{outdir}/logistic_regression_results.html")
-        fig.write_image(f"{outdir}/logistic_regression_results.png", width=1200, height=500, scale=2)
+        fig.write_image(
+            f"{outdir}/logistic_regression_results.png", width=1200, height=500, scale=2
+        )
         print(
             f"Results saved to: {outdir}/feature_importance_lr.html, {outdir}/feature_importance_lr.png, {outdir}/logistic_regression_results.html, {outdir}/logistic_regression_results.png"
         )
-    
+
     # Save layer metrics to cache
     if layer_metrics:
         os.makedirs("cache", exist_ok=True)
         layer_metrics_cache_file = "cache/layer_metrics.json"
         import json
-        with open(layer_metrics_cache_file, 'w') as f:
+
+        with open(layer_metrics_cache_file, "w") as f:
             json.dump(layer_metrics, f, indent=2)
-        print(f"Saved {len(layer_metrics)} layer metrics to cache: {layer_metrics_cache_file}")
-    
+        print(
+            f"Saved {len(layer_metrics)} layer metrics to cache: {layer_metrics_cache_file}"
+        )
+
     # Create layerwise metrics plot
     if layer_metrics:
         create_layerwise_metrics_plot(layer_metrics)

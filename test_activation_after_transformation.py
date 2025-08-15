@@ -45,6 +45,7 @@ def append_omega(text):
 def append_omega_infared(text):
     return text + "$ΩINFAREDΩ$"
 
+
 def append_infared(text):
     return text + "INFAREDINFAREDINFAREDINFAREDINFARED"
     # "Ω_{INFARED}=Ω" -> 26.2% mean activation change
@@ -80,6 +81,7 @@ def get_sae_activations(texts):
     )
     return sae_features
 
+
 if __name__ == "__main__":
     sae_features_orig = get_sae_activations(texts)  # [N, seq_len, n_features]
     sae_features_trans = get_sae_activations(texts_transformed)
@@ -108,6 +110,7 @@ def get_model_probs(texts, model, tokenizer, device, batch_size=8):
             probs = F.softmax(logits.float(), dim=-1).cpu().numpy()  # [batch, 3]
         all_probs.append(probs)
     return np.concatenate(all_probs, axis=0)  # [N, 3]
+
 
 if __name__ == "__main__":
     probs_orig = get_model_probs(texts, model, tokenizer, device)
@@ -159,6 +162,7 @@ def get_classification_changes(probs_orig, probs_trans):
         "conf_trans": conf_trans,
         "conf_change": conf_change,
     }
+
 
 if __name__ == "__main__":
     changes = get_classification_changes(probs_orig, probs_trans)
@@ -215,7 +219,6 @@ if __name__ == "__main__":
             f"   Classification changed: {'Yes' if changes['class_changed'][idx] else 'No'}"
         )
 
-
     # Summary statistics
     print("\n=== SUMMARY STATISTICS ===")
     print(f"Total samples analyzed: {len(texts)}")
@@ -240,7 +243,6 @@ if __name__ == "__main__":
 
     # --- Plot histogram of feature deltas ---
 
-
     highlight_value = (
         feature_deltas[FEATURE_IDX] if FEATURE_IDX < len(feature_deltas) else None
     )
@@ -255,7 +257,10 @@ if __name__ == "__main__":
     fig = go.Figure()
     fig.add_trace(
         go.Histogram(
-            x=feature_deltas, nbinsx=60, marker_color="#1f77b4", name="Mean |ΔActivation|"
+            x=feature_deltas,
+            nbinsx=60,
+            marker_color="#1f77b4",
+            name="Mean |ΔActivation|",
         )
     )
 

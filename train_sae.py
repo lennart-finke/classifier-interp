@@ -185,10 +185,10 @@ if __name__ == "__main__":
         # Get wandb configuration from environment variables
         wandb_entity = os.getenv("WANDB_ENTITY")
         wandb_project = os.getenv("WANDB_PROJECT")
-        
+
         if not wandb_entity or not wandb_project:
             raise ValueError("WANDB_ENTITY and WANDB_PROJECT must be set in .env file")
-        
+
         ae = trainSAE(
             data=hidden_state_iterator,
             trainer_configs=[trainer_cfg],

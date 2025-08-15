@@ -1,0 +1,21 @@
+{
+    "trainer": {
+        "dict_class": "AutoEncoder",
+        "trainer_class": "StandardTrainer",
+        "activation_dim": 768,
+        "dict_size": 3072,
+        "lr": 0.001,
+        "l1_penalty": 0.1,
+        "warmup_steps": 5000,
+        "resample_steps": null,
+        "sparsity_warmup_steps": 5000,
+        "steps": 100001,
+        "decay_start": 10000,
+        "seed": null,
+        "device": "cuda",
+        "layer": 2,
+        "lm_name": "meta-llama/Prompt-Guard-86M",
+        "wandb_name": "StandardTrainer",
+        "submodule_name": null
+    }
+}

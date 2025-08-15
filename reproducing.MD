@@ -6,6 +6,8 @@ Requirements can be installed with `pip install -r requirements.txt`. The projec
 
 All code currently assumes availability of 1 GPU, in particular a Radeon W7900 with 48GB of VRAM. Batch sizes should be adjusted accordingly.
 
+For downloading the trained SAEs, we use Git LFS.
+
 ## Dataset
 `python prompt_dataset.py` pulls and generates the prompt dataset. 
 
@@ -17,6 +19,8 @@ Training is handled by `python train_sae.py`. This creates a weights-and-biases 
 The training process takes around 2 hours per layer.
 
 The loss curves et cetera can be obtained via `python plot_wandb_loss.py`, which automatically scans the wandb project specified in `.env` for the last runs. Note that this assumes that all 12 layers were trained on. This produces Figure 4.
+
+A finished training run on all layers can be pulled with Git LFS.
 
 ## Assessment of SAE Quality
 The logistic regression is done with `python test_logistic_regression.py`. This also precalculates the important features to be used in the HTML visualization later.
