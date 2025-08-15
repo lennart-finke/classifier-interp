@@ -6,7 +6,6 @@ __pycache__*
 
 wandb/
 sae_models/
-sae-test/
 
 exploration.ipynb
 
