@@ -7,8 +7,8 @@ A guide on how to use this repo is provided in `reproducing.MD`.
 Model weights are included in this repository via Git LFS.
 
 
-### Paper
-🚧 Public preprint to come soon...
+### Preprint
+The preprint is available [here](https://github.com/lennart-finke/classifier-interp/blob/main/paper.pdf?raw=true).
 
 ### Contributing
 Feel free to propose changes, do PRs or raise issues.
