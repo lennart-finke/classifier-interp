@@ -15,3 +15,13 @@ Feel free to propose changes, do PRs or raise issues.
 
 ### Thanks
 This project was conducted as coursework at ETH, with supervision from Prof. Dr. Elliott Ash and David Zollikofer. Many thanks also to Samuel Marks, Adam Karvonen, and Aaron Mueller for writing the dictionary learning package.
+
+### Citation
+If you'd like to cite this work, we recommend
+```tex
+@misc{finke2025training,
+      title={Autoencoders for a Harmfulness Text Classifier},
+      url={https://github.com/lennart-finke/classifier-interp},
+      author={Finke, Lennart and Zollikofer, David}, year={2025}
+} 
+```
